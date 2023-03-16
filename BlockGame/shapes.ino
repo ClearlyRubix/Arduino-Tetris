@@ -1,5 +1,4 @@
 void drawSquare(int x, int y) {
-  activeIsSquare = true;
   playArea[x][y] = 3;
   playArea[x][y + 1] = 2;
   playArea[x + 1][y] = 2;

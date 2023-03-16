@@ -1,4 +1,5 @@
 void createBlock(int i, int x, int y) {
+  currentBlock = i;
   switch (i) {
     case 0:
       drawSquare(x, y);
@@ -28,3 +29,13 @@ void createBlock(int i, int x, int y) {
       break;
   }
 }
+
+// void storeBlock() {
+//   if (alreadyStoredThisTurn) {  // Don't do anything if you already swapped
+//     return;
+//   }
+
+//   if (storedBlock < 7 || storedBlock >= 0) {  // if there is already a stored block
+//     storedBlock =
+//   }
+// }

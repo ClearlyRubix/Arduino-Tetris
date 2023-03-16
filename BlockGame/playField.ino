@@ -26,7 +26,7 @@ void lockShape(int oldX[3], int oldY[3], int oldCX, int oldCY) {
   playArea[oldCX][oldCY] = 1;
   drawBlock(oldCX, oldCY, TFT_ORANGE);  // draw Locked Center
 
-  if (activeIsSquare) {activeIsSquare = false;}
+  alreadyStoredThisTurn = false;  // unlock Store function
 }
 
 void dropShape() {
@@ -103,8 +103,8 @@ void dropShape() {
   drawBlock(oldCX, oldCY - 1, TFT_WHITE);  // Draw new position
 }
 
-void rotateShape() {  // (x,y) -> (-y,x) CCW rotation
-  if (activeIsSquare) {return;}
+void rotateShape() {                  // (x,y) -> (-y,x) CCW rotation
+  if (currentBlock == 0) { return; }  // dont rotate if its square
   int xList[3];
   int yList[3];
 
@@ -148,7 +148,7 @@ void rotateShape() {  // (x,y) -> (-y,x) CCW rotation
     playArea[xList[t]][yList[t]] = 0;
     clearBlock(xList[t], yList[t]);  // Clear old positions
   }
-  
+
   // perform rotation
   for (int l = 0; l < 3; l++) {
     playArea[newX[l]][newY[l]] = 2;
@@ -196,13 +196,14 @@ void translateShape(int t) {
       return;
     } else if (playArea[newX[k]][newY[k]] == 1) {  // will translate into another block
       return;
-    } else if ((centerX + t) < 0) { // center will translate outside left
-      return;
-    } else if ((centerX + t) > (AREAWIDTH - 1)) { // center will translate outside right
-      return;
-    } else if (playArea[(centerX + t)][centerY] == 1) { // center wil ltranslate into another block
-      return;
     }
+  }
+  if ((centerX + t) < 0) {  // center will translate outside left
+    return;
+  } else if ((centerX + t) > (AREAWIDTH - 1)) {  // center will translate outside right
+    return;
+  } else if (playArea[(centerX + t)][centerY] == 1) {  // center wil ltranslate into another block
+    return;
   }
 
 
@@ -212,9 +213,9 @@ void translateShape(int t) {
   }
 
   playArea[centerX][centerY] = 0;
-  clearBlock(centerX, centerY); // Clear old center position
+  clearBlock(centerX, centerY);  // Clear old center position
 
-  
+
 
   // perform translation
   for (int l = 0; l < 3; l++) {
@@ -224,5 +225,4 @@ void translateShape(int t) {
   // Center translation
   playArea[centerX + t][centerY] = 3;
   drawBlock(centerX + t, centerY, TFT_ORANGE);
-  
 }

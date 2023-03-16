@@ -20,11 +20,14 @@ TFT_eSprite block = TFT_eSprite(&tft);
 
 // block types Square, I = 0, I = 1, S = 2, Z = 3, L = 4, J = 5, T = 6 
 int storedBlock = -1;
+bool alreadyStoredThisTurn = false;
 int nextBlock = -1;
+int currentBlock = -1;
 int randSeed;
 
+
 int playArea[AREAWIDTH][AREAHEIGHT] = {0};
-bool activeIsSquare = false;
+
 
 #define BLOCKWIDTH 16
 #define BLOCKHEIGHT 16
@@ -32,59 +35,56 @@ bool activeIsSquare = false;
 unsigned long time = millis();
 unsigned long oldTime = 0;
 
-const int leftButton = 0;
-const int rightButton = 0;
+const int leftButton = 40;
+const int rightButton = 42;
 const int dropButton = 0;
-const int rotateButton = 34;
+const int rotateButton = 23;
 const int saveButton = 0;
+const int storeButton = 0;
 
 
 void setup() {
   Serial.begin(250000);
+  
+  // setup randomness
   randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
   Serial.print("Random Seed: ");
   Serial.println(randSeed);
   randomSeed(randSeed);
+
+  // initialize tft Screen
   tft.init();
   tft.setRotation(0);
   tft.fillScreen(TFT_BLACK);
 
+  // initialize buttons
   pinMode(leftButton, INPUT);
   pinMode(rightButton, INPUT);
   pinMode(dropButton, INPUT);
   pinMode(rotateButton, INPUT);
   pinMode(saveButton, INPUT);
 
+  // initialize game logic
   nextBlock = random(0,7);
   createBlock(random(0,7), AREAWIDTH/2-1, AREAHEIGHT-3);
   initDisplay();
 
 }
 
-bool rotatePressed = false;
-int rotateButtonState;
+
 
 
 void loop() {
-    time = millis();
+    time = millis(); // time for regular block dropping
+
+    // updatae random Seed
     randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
-    Serial.print("Random Seed: ");
-    Serial.println(randSeed);
-    randomSeed(randSeed);
 
-    rotateButtonState = digitalRead(rotateButton);
-    
 
-    // update Rotate
-    if (rotateButtonState == HIGH && rotatePressed == false) {
-      rotatePressed = true;
-      rotateShape();
-      Serial.println("ROTATE");
-    }
-    if (rotateButtonState == LOW) {
-      rotatePressed = false;
-    }
-
+    // Check Buttons
+    checkRotateButton();
+    checkLeftButton();
+    checkRightButton();
     // 
 
     if ((time - oldTime) >= 1000) {
