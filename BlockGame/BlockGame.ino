@@ -1,7 +1,4 @@
 // TODO:
-// Multiple Shapes going
-// Block Stroing
-// Row Clearing
 // Score
 // Lose (Shape generation checking)
 // Music
@@ -14,33 +11,41 @@ TFT_eSPI tft = TFT_eSPI();
 
 TFT_eSprite block = TFT_eSprite(&tft);
 
+// Constants
+
 // Area Width and Height in "Blocks"
 #define AREAWIDTH 10
-#define AREAHEIGHT 25
+#define AREAHEIGHT 24
+#define BLOCKWIDTH 20
+#define BLOCKHEIGHT 20
 
-// block types Square, I = 0, I = 1, S = 2, Z = 3, L = 4, J = 5, T = 6 
+const int leftButton = 40;
+const int rightButton = 46;
+const int instaLockButton = 0;
+const int rotateButton = 23;
+const int saveButton = 0;
+const int storeButton = 42;
+
+const int startX = AREAWIDTH/2-1;
+const int startY = AREAHEIGHT-2;
+
+// block statuses
+// block types Square, square = 0, I = 1, S = 2, Z = 3, L = 4, J = 5, T = 6 
 int storedBlock = -1;
+int tempStore = -1;
 bool alreadyStoredThisTurn = false;
 int nextBlock = -1;
 int currentBlock = -1;
+
+
+// game function variables
 int randSeed;
-
-
 int playArea[AREAWIDTH][AREAHEIGHT] = {0};
-
-
-#define BLOCKWIDTH 16
-#define BLOCKHEIGHT 16
 
 unsigned long time = millis();
 unsigned long oldTime = 0;
+int score = 0;
 
-const int leftButton = 40;
-const int rightButton = 42;
-const int dropButton = 0;
-const int rotateButton = 23;
-const int saveButton = 0;
-const int storeButton = 0;
 
 
 void setup() {
@@ -48,25 +53,31 @@ void setup() {
   
   // setup randomness
   randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
-  Serial.print("Random Seed: ");
-  Serial.println(randSeed);
   randomSeed(randSeed);
 
   // initialize tft Screen
   tft.init();
-  tft.setRotation(0);
+  tft.setRotation(4);
+  tft.setOrigin(0,0);
   tft.fillScreen(TFT_BLACK);
+  tft.drawPixel(0,480, TFT_GREEN);
 
   // initialize buttons
   pinMode(leftButton, INPUT);
   pinMode(rightButton, INPUT);
-  pinMode(dropButton, INPUT);
+  pinMode(instaLockButton, INPUT);
   pinMode(rotateButton, INPUT);
   pinMode(saveButton, INPUT);
 
+  digitalWrite(leftButton, HIGH);
+  digitalWrite(rightButton, HIGH);
+  digitalWrite(instaLockButton, HIGH);
+  digitalWrite(rotateButton, HIGH);
+  digitalWrite(saveButton, HIGH);
+
   // initialize game logic
-  nextBlock = random(0,7);
-  createBlock(random(0,7), AREAWIDTH/2-1, AREAHEIGHT-3);
+  genNextBlock();
+  createBlock(random(0,7), startX, startY);
   initDisplay();
 
 }
@@ -85,13 +96,15 @@ void loop() {
     checkRotateButton();
     checkLeftButton();
     checkRightButton();
-    // 
+    checkInstaLockButton();
+    checkStoreButton();
+    
 
     if ((time - oldTime) >= 1000) {
       printPlayArea();
       oldTime=time;
       //rotateShape();
-      //dropShape();
+      dropShape();
 
       //translateShape(-1);
       

@@ -1,21 +1,23 @@
 void printPlayArea() {
-  Serial.println("--------------");
-  for (int y = AREAHEIGHT - 1; y >= 0; y--) {
-    for (int x = 0; x < AREAWIDTH; x++) {
-      Serial.print(playArea[x][y]);
-    }
-    Serial.println();
-  }
-  Serial.println("--------------1");
+  // Serial.println("--------------");
+  // for (int y = AREAHEIGHT - 1; y >= 0; y--) {
+  //   for (int x = 0; x < AREAWIDTH; x++) {
+  //     Serial.print(playArea[x][y]);
+  //   }
+  //   Serial.println();
+  // }
+  // Serial.println("--------------");
 }
 
-// void clearPlayArea() {
-//   for (int y = AREAHEIGHT - 1; y >= 0; y--) {
-//     for (int x = 0; x < AREAWIDTH; x++) {
-//       playArea[x][y] = 0;
-//     }
-//   }
-// }
+void clearPlayArea() {
+  for (int y = AREAHEIGHT - 1; y >= 0; y--) {
+    for (int x = 0; x < AREAWIDTH; x++) {
+      if (playArea[x][y] == 1) {
+        playArea[x][y] = 0;
+      }
+    }
+  }
+}
 
 void lockShape(int oldX[3], int oldY[3], int oldCX, int oldCY) {
   for (int k = 0; k < 3; k++) {  // Lock Shape
@@ -27,6 +29,11 @@ void lockShape(int oldX[3], int oldY[3], int oldCX, int oldCY) {
   drawBlock(oldCX, oldCY, TFT_ORANGE);  // draw Locked Center
 
   alreadyStoredThisTurn = false;  // unlock Store function
+
+  checkClears();
+
+  createBlock(getNextBlock(), startX, startY);
+  genNextBlock();
 }
 
 void dropShape() {
@@ -55,22 +62,7 @@ void dropShape() {
 
   // check next non center positions
   for (int j = 0; j < 3; j++) {
-    Serial.print("Check Collision: j: ");
-    Serial.print(j);
-    Serial.print(" | X: ");
-    Serial.print(oldX[j]);
-    Serial.print(" | Y: ");
-    Serial.print(oldY[j]);
-    Serial.println();
-
     if (playArea[oldX[j]][oldY[j] - 1] == 1 || oldY[j] - 1 < 0) {
-      Serial.print("Found Collision: j: ");
-      Serial.print(j);
-      Serial.print(" | X: ");
-      Serial.print(oldX[j]);
-      Serial.print(" | Y: ");
-      Serial.print(oldY[j]);
-      Serial.println();
       lockShape(oldX, oldY, oldCX, oldCY);
       return;
     }
@@ -188,8 +180,6 @@ void translateShape(int t) {
 
   // check valid translation
   for (int k = 0; k < 3; k++) {
-    Serial.print("New X pos: ");
-    Serial.println(newX[k]);
     if (newX[k] < 0) {  // will translate outside left boundary
       return;
     } else if (newX[k] > (AREAWIDTH - 1)) {  // will translate outside right boundary
@@ -225,4 +215,63 @@ void translateShape(int t) {
   // Center translation
   playArea[centerX + t][centerY] = 3;
   drawBlock(centerX + t, centerY, TFT_ORANGE);
+}
+
+void checkClears() {
+
+  bool needMove = false;
+  int rowsCleared = 0;
+  // go through by row
+  for (int y = 0; y < AREAHEIGHT; y++) { // each row
+    int rowOnes = 0;
+    for (int x = 0; x < AREAWIDTH; x++) { // check each block in row
+      if (playArea[x][y] == 1) {  // if 1 is found add to total rowOnes
+        rowOnes++;
+      }
+    }
+
+    // if row is full, set to 0 and clear
+    if (rowOnes == AREAWIDTH) {
+      for (int i = 0; i < AREAWIDTH; i++) {
+        playArea[i][y] = 0;
+        clearBlock(i, y);
+      }
+      needMove = true;
+      rowsCleared++; // update rows cleared
+    }
+    rowOnes = 0;
+  }
+
+  if (needMove) {
+    // move all blocks down
+    for (int x = 0; x < AREAWIDTH; x++) {
+      for (int y = 0; y < AREAHEIGHT; y++) {
+        if (playArea[x][y] == 1) {
+          // clear old position
+          clearBlock(x, y);
+          playArea[x][y] = 0;
+          drawBlock(x, (y - rowsCleared), TFT_MAGENTA);
+          playArea[x][y - rowsCleared] = 1;
+        }
+      }
+    }
+
+    switch (rowsCleared) {
+      case 1:
+        score += 40;
+        break;
+      case 2:
+        score += 100;
+        break;
+      case 3:
+        score += 300;
+        break;
+      case 4:
+        score += 1200;
+        break;
+    }
+
+    rowsCleared = 0;
+    needMove = false;
+  }
 }
