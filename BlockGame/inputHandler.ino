@@ -18,11 +18,11 @@ void checkRotateButton() {
   rotateButtonState = digitalRead(rotateButton);
 
   // make sure it only does 1 rotation, not as long as it's pressed
-  if (rotateButtonState == HIGH && rotatePressed == false) {
+  if (rotateButtonState == LOW && rotatePressed == false) {
     rotatePressed = true;
     rotateShape();
   }
-  if (rotateButtonState == LOW) {
+  if (rotateButtonState == HIGH) {
     rotatePressed = false;
   }
 }
@@ -34,11 +34,11 @@ void checkLeftButton() {
   leftButtonState = digitalRead(leftButton);
 
   // make sure it only does 1 rotation, not as long as it's pressed
-  if (leftButtonState == HIGH && leftPressed == false) {
+  if (leftButtonState == LOW && leftPressed == false) {
     leftPressed = true;
     translateShape(-1);
   }
-  if (leftButtonState == LOW) {
+  if (leftButtonState == HIGH) {
     leftPressed = false;
   }
 }
@@ -51,11 +51,11 @@ void checkRightButton() {
   rightButtonState = digitalRead(rightButton);
 
   // make sure it only does 1 rotation, not as long as it's pressed
-  if (rightButtonState == HIGH && rightPressed == false) {
+  if (rightButtonState == LOW && rightPressed == false) {
     rightPressed = true;
     translateShape(1);
   }
-  if (rightButtonState == LOW) {
+  if (rightButtonState == HIGH) {
     rightPressed = false;
   }
 }
@@ -65,11 +65,11 @@ void checkStoreButton() {
   storeButtonState = digitalRead(storeButton);
 
   // make sure it only does 1 rotation, not as long as it's pressed
-  if (storeButtonState == HIGH && storePressed == false) {
+  if (storeButtonState == LOW && storePressed == false) {
     storePressed = true;
     storeBlock();
   }
-  if (storeButtonState == LOW) {
+  if (storeButtonState == HIGH) {
     storePressed = false;
   }
 }
@@ -78,13 +78,12 @@ void checkStoreButton() {
 void checkInstaLockButton() {
   // get button state
   instaLockButtonState = digitalRead(instaLockButton);
-
-  // make sure it only does 1 rotation, not as long as it's pressed
-  if (instaLockButtonState == HIGH && instaLockPressed == false) {
+  // make sure it only does 1 input, not as long as it's pressed
+  if (instaLockButtonState == LOW && instaLockPressed == false) {
     instaLockPressed = true;
-    rotateShape();
+    instaLock();
   }
-  if (instaLockButtonState == LOW) {
+  if (instaLockButtonState == HIGH) {
     instaLockPressed = false;
   }
 }
