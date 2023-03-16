@@ -1,5 +1,5 @@
 // TODO:
-// Score
+// insta lock
 // Lose (Shape generation checking)
 // Music
 // Start Menu
@@ -19,12 +19,11 @@ TFT_eSprite block = TFT_eSprite(&tft);
 #define BLOCKWIDTH 20
 #define BLOCKHEIGHT 20
 
-const int leftButton = 40;
-const int rightButton = 46;
-const int instaLockButton = 0;
-const int rotateButton = 23;
-const int saveButton = 0;
-const int storeButton = 42;
+const int leftButton = 22;
+const int rightButton = 24;
+const int instaLockButton = 28;
+const int rotateButton = 26;
+const int storeButton = 30;
 
 const int startX = AREAWIDTH/2-1;
 const int startY = AREAHEIGHT-2;
@@ -63,17 +62,11 @@ void setup() {
   tft.drawPixel(0,480, TFT_GREEN);
 
   // initialize buttons
-  pinMode(leftButton, INPUT);
-  pinMode(rightButton, INPUT);
-  pinMode(instaLockButton, INPUT);
-  pinMode(rotateButton, INPUT);
-  pinMode(saveButton, INPUT);
-
-  digitalWrite(leftButton, HIGH);
-  digitalWrite(rightButton, HIGH);
-  digitalWrite(instaLockButton, HIGH);
-  digitalWrite(rotateButton, HIGH);
-  digitalWrite(saveButton, HIGH);
+  pinMode(leftButton, INPUT_PULLUP);
+  pinMode(rightButton, INPUT_PULLUP);
+  pinMode(instaLockButton, INPUT_PULLUP);
+  pinMode(rotateButton, INPUT_PULLUP);
+  pinMode(storeButton, INPUT_PULLUP);
 
   // initialize game logic
   genNextBlock();
@@ -99,15 +92,11 @@ void loop() {
     checkInstaLockButton();
     checkStoreButton();
     
-
+    // every second
     if ((time - oldTime) >= 1000) {
       printPlayArea();
       oldTime=time;
-      //rotateShape();
       dropShape();
-
-      //translateShape(-1);
-      
     }
 }
 

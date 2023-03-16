@@ -1,12 +1,12 @@
 void printPlayArea() {
-  // Serial.println("--------------");
-  // for (int y = AREAHEIGHT - 1; y >= 0; y--) {
-  //   for (int x = 0; x < AREAWIDTH; x++) {
-  //     Serial.print(playArea[x][y]);
-  //   }
-  //   Serial.println();
-  // }
-  // Serial.println("--------------");
+  Serial.println("--------------");
+  for (int y = AREAHEIGHT - 1; y >= 0; y--) {
+    for (int x = 0; x < AREAWIDTH; x++) {
+      Serial.print(playArea[x][y]);
+    }
+    Serial.println();
+  }
+  Serial.println("--------------");
 }
 
 void clearPlayArea() {
@@ -22,11 +22,11 @@ void clearPlayArea() {
 void lockShape(int oldX[3], int oldY[3], int oldCX, int oldCY) {
   for (int k = 0; k < 3; k++) {  // Lock Shape
     playArea[oldX[k]][oldY[k]] = 1;
-    drawBlock(oldX[k], oldY[k], TFT_MAGENTA);  // draw Locked shape
+    drawBlock(oldX[k], oldY[k], TFT_CYAN);  // draw Locked shape
   }
   // Lock Center
   playArea[oldCX][oldCY] = 1;
-  drawBlock(oldCX, oldCY, TFT_ORANGE);  // draw Locked Center
+  drawBlock(oldCX, oldCY, TFT_CYAN);  // draw Locked Center
 
   alreadyStoredThisTurn = false;  // unlock Store function
 
@@ -92,7 +92,7 @@ void dropShape() {
 
   // draw center
   playArea[oldCX][oldCY - 1] = 3;
-  drawBlock(oldCX, oldCY - 1, TFT_WHITE);  // Draw new position
+  drawBlock(oldCX, oldCY - 1, TFT_LIGHTGREY);  // Draw new position
 }
 
 void rotateShape() {                  // (x,y) -> (-y,x) CCW rotation
@@ -144,7 +144,7 @@ void rotateShape() {                  // (x,y) -> (-y,x) CCW rotation
   // perform rotation
   for (int l = 0; l < 3; l++) {
     playArea[newX[l]][newY[l]] = 2;
-    drawBlock(newX[l], newY[l], TFT_GREEN);
+    drawBlock(newX[l], newY[l], TFT_WHITE);
   }
 }
 
@@ -214,7 +214,7 @@ void translateShape(int t) {
   }
   // Center translation
   playArea[centerX + t][centerY] = 3;
-  drawBlock(centerX + t, centerY, TFT_ORANGE);
+  drawBlock(centerX + t, centerY, TFT_LIGHTGREY);
 }
 
 void checkClears() {
@@ -222,10 +222,10 @@ void checkClears() {
   bool needMove = false;
   int rowsCleared = 0;
   // go through by row
-  for (int y = 0; y < AREAHEIGHT; y++) { // each row
+  for (int y = 0; y < AREAHEIGHT; y++) {  // each row
     int rowOnes = 0;
-    for (int x = 0; x < AREAWIDTH; x++) { // check each block in row
-      if (playArea[x][y] == 1) {  // if 1 is found add to total rowOnes
+    for (int x = 0; x < AREAWIDTH; x++) {  // check each block in row
+      if (playArea[x][y] == 1) {           // if 1 is found add to total rowOnes
         rowOnes++;
       }
     }
@@ -237,7 +237,7 @@ void checkClears() {
         clearBlock(i, y);
       }
       needMove = true;
-      rowsCleared++; // update rows cleared
+      rowsCleared++;  // update rows cleared
     }
     rowOnes = 0;
   }
@@ -250,7 +250,7 @@ void checkClears() {
           // clear old position
           clearBlock(x, y);
           playArea[x][y] = 0;
-          drawBlock(x, (y - rowsCleared), TFT_MAGENTA);
+          drawBlock(x, (y - rowsCleared), TFT_CYAN);
           playArea[x][y - rowsCleared] = 1;
         }
       }
@@ -273,5 +273,62 @@ void checkClears() {
 
     rowsCleared = 0;
     needMove = false;
+  }
+}
+
+void instaLock() {
+
+  // arrays of xy coordinates
+  int currentX[3];
+  int currentY[3];
+  int currentCX;
+  int currentCY;
+
+  // the coordinate pair we are saving
+  int i = 0;
+
+  // get x,y pairs that are 2's or 3's
+  for (int x = 0; x < AREAWIDTH; x++) {
+    for (int y = 0; y < AREAHEIGHT; y++)
+      if (playArea[x][y] == 2) {
+        currentX[i] = x;
+        currentY[i] = y;
+        i++;
+      } else if (playArea[x][y] == 3) {
+        currentCX = x;
+        currentCY = y;
+      }
+  }
+
+  // clear non centers
+  for (int m = 0; m < 3; m++) {
+    playArea[currentX[m]][currentY[m]] = 0;
+    clearBlock(currentX[m], currentY[m]);  // Clear old position
+  }
+  // clear center
+  playArea[currentCX][currentCY] = 0;
+  clearBlock(currentCX, currentCY);  // Clear old position
+
+
+  while (true) {
+    // check next non center positions
+    for (int j = 0; j < 3; j++) {
+      if (playArea[currentX[j]][currentY[j] - 1] == 1 || currentY[j] - 1 < 0) {
+        lockShape(currentX, currentY, currentCX, currentCY);
+        return;
+      }
+    }
+
+    // Check next center position
+    if (playArea[currentCX][currentCY - 1] == 1 || currentCY - 1 < 0) {
+      lockShape(currentX, currentY, currentCX, currentCY);
+      return;
+    }
+
+    // if checks pass move on to next y level
+    for (int k = 0; k < 3; k++) {
+      currentY[k]--;
+    }
+    currentCY--;
   }
 }
