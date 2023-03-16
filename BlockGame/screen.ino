@@ -36,34 +36,65 @@ void clearBlock(int x, int y) {
   tft.drawRect(320 - x * BLOCKWIDTH - BLOCKWIDTH, y * BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, TFT_LIGHTGREY);
 }
 
-void updateStoredBlockArea() {
-  Serial.println(storedBlock);
-  int oX = 60;
-  int oY = 320;
-  switch (storedBlock) {
-    case 0:
-      drawBlock(oX, oY, TFT_YELLOW);
+void generalDrawShape(int oX, int oY, int shape, uint32_t color) {
+  switch (shape) {
+    case 0:  // Square
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
-    case 1:
-      drawBlock(oX, oY, TFT_YELLOW);
+    case 1:  // I
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + 2 * BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
-    case 2:
-      drawBlock(oX, oY, TFT_YELLOW);
+    case 2:  // S
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
-    case 3:
-      drawBlock(oX, oY, TFT_YELLOW);
+    case 3:  // Z
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY  + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
-    case 4:
-      drawBlock(oX, oY, TFT_YELLOW);
+    case 4:  // L
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
-    case 5:
-      drawBlock(oX, oY, TFT_YELLOW);
+    case 5:  // J
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
-    case 6:
-      drawBlock(oX, oY, TFT_YELLOW);
+    case 6:  // T
+      tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX - BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
   }
 }
 
+void updateStoredBlockArea() {
+  int oX = 40;
+  int oY = 480 - 80;
+  generalDrawShape(oX, oY, storedBlock,TFT_YELLOW);
+}
+
+void updateNextBlockArea() {
+  int oX = 40;
+  int oY = 480 - 80 - 120;
+  generalDrawShape(oX, oY, nextBlock,TFT_YELLOW);
+}
+
 void update7Segment() {
+
 }

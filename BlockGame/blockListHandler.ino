@@ -31,7 +31,9 @@ void createBlock(int i, int x, int y) {
 }
 
 int genNextBlock() {
+  generalDrawShape(40, 280, nextBlock, TFT_BLACK); // clear old nextBlock image
   nextBlock = random(0, 7);
+  updateNextBlockArea();
   return nextBlock;
 }
 
@@ -43,14 +45,14 @@ void storeBlock() {
   if (alreadyStoredThisTurn) {  // Don't do anything if you already swapped
     return;
   }
-  if (storedBlock < 7 && storedBlock >= 0) {
-
-    // if there is already a stored block
+  if (storedBlock < 7 && storedBlock >= 0) { // if there is already a stored block
     alreadyStoredThisTurn = true;  // don't allow swap again
+    generalDrawShape(40, 400, storedBlock,TFT_BLACK); // clear stord block image
     // swap block variables
     storedBlock = currentBlock;
     currentBlock = tempStore;
     tempStore = storedBlock;
+    
 
   } else {  // if stored block is empty
 
