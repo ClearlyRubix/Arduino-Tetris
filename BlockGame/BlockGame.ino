@@ -1,5 +1,4 @@
 // TODO:
-// insta lock
 // Lose (Shape generation checking)
 // Music
 // Start Menu

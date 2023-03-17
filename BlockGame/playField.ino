@@ -218,14 +218,14 @@ void translateShape(int t) {
 }
 
 void checkClears() {
-
   bool needMove = false;
   int rowsCleared = 0;
-  // go through by row
-  for (int y = 0; y < AREAHEIGHT; y++) {  // each row
+
+  // go through by from bottomRow up
+  for (int y = 0; y < AREAHEIGHT; y++) {  // each row from bottomRow
     int rowOnes = 0;
-    for (int x = 0; x < AREAWIDTH; x++) {  // check each block in row
-      if (playArea[x][y] == 1) {           // if 1 is found add to total rowOnes
+    for (int x = 0; x < AREAWIDTH; x++) {  // get 1's in row
+      if (playArea[x][y] == 1) {
         rowOnes++;
       }
     }
@@ -240,40 +240,41 @@ void checkClears() {
       rowsCleared++;  // update rows cleared
     }
     rowOnes = 0;
-  }
 
-  if (needMove) {
-    // move all blocks down
-    for (int x = 0; x < AREAWIDTH; x++) {
-      for (int y = 0; y < AREAHEIGHT; y++) {
-        if (playArea[x][y] == 1) {
-          // clear old position
-          clearBlock(x, y);
-          playArea[x][y] = 0;
-          drawBlock(x, (y - rowsCleared), TFT_CYAN);
-          playArea[x][y - rowsCleared] = 1;
+    if (needMove) {
+      // move all blocks one tile down down
+      for (int mx = 0; mx < AREAWIDTH; mx++) {
+        for (int my = y; my < AREAHEIGHT; my++) {
+          if (playArea[mx][my] == 1) {
+            // clear old position
+            clearBlock(mx, my);
+            playArea[mx][my] = 0;
+            drawBlock(mx, (my - 1), TFT_CYAN);
+            playArea[mx][my - 1] = 1;
+          }
         }
       }
+      y--; // subtract y because now blocks have moved down and we would miss a row      
+      needMove = false;
     }
-
-    switch (rowsCleared) {
-      case 1:
-        score += 40;
-        break;
-      case 2:
-        score += 100;
-        break;
-      case 3:
-        score += 300;
-        break;
-      case 4:
-        score += 1200;
-        break;
-    }
-
-    rowsCleared = 0;
-    needMove = false;
   }
+  // add score and reset rowsCleared
+  switch (rowsCleared) {
+    case 1:
+      score += 40;
+      break;
+    case 2:
+      score += 100;
+      break;
+    case 3:
+      score += 300;
+      break;
+    case 4:
+      score += 1200;
+      break;
+  }
+
+  rowsCleared = 0;
 }
 
 void instaLock() {
