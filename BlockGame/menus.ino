@@ -60,7 +60,7 @@ void initStartMenu() {
   tft.setTextSize(3);
   tft.drawCentreString("HIGHSCORE", 160, 120, 1);
   tft.setTextSize(2);
-  tft.drawCentreString("2500", 160, 160, 1);
+  tft.drawCentreString((String)highscore, 160, 160, 1);
 
   /////////
   //START//
@@ -100,6 +100,7 @@ void updateStartMenu() {
   }
 }
 
+bool newHighscore = false;
 void initLossMenu() {
   if (!loseMenu) { return; }  // just in case this runs while menu not active
   tft.setRotation(2);
@@ -149,38 +150,76 @@ void initLossMenu() {
   tft.drawCentreString("GAME", 160, 20, 1);
   tft.drawCentreString("OVER", 160, 78, 1);
 
-  //////////////
-  //HIGH SCORE//
-  //////////////
+  if (score > highscore) {
+    EEPROM.put(0, score);
+    highscore = score;
+    newHighscore = true;
+    //////////////
+    //HIGH SCORE//
+    //////////////
 
-  // BG
-  tft.fillRect(71, 146, 175, 70, 0x4a49);
-  tft.drawRect(70, 145, 177, 72, TFT_BLUE);
-  tft.drawRect(69, 144, 179, 74, TFT_BLUE);
-  tft.drawRect(68, 143, 181, 76, TFT_WHITE);
-  tft.drawRect(67, 142, 183, 78, TFT_WHITE);
+    // BG
+    tft.fillRect(71, 146, 175, 82, 0x4a49);
+    tft.drawRect(70, 145, 177, 84, TFT_BLUE);
+    tft.drawRect(69, 144, 179, 86, TFT_BLUE);
+    tft.drawRect(68, 143, 181, 88, TFT_WHITE);
+    tft.drawRect(67, 142, 183, 90, TFT_WHITE);
 
-  // Text
-  tft.setTextColor(TFT_WHITE);
-  tft.setTextSize(3);
-  tft.drawCentreString("HIGHSCORE", 160, 154, 1);
-  tft.setTextSize(2);
-  tft.drawCentreString("2500", 160, 194, 1);
+    // Text
+    tft.setTextColor(TFT_WHITE);
+    tft.setTextSize(3);
+    tft.drawCentreString("NEW", 160, 154, 1);
+    tft.drawCentreString("HIGHSCORE", 160, 180, 1);
+    tft.setTextSize(2);
+    tft.drawCentreString((String)highscore, 160, 210, 1);
 
-  //////////////
-  //YOUR SCORE//
-  //////////////
-  tft.drawCentreString("YOUR SCORE: 123456789", 160, 250, 1);
+    //////////////
+    //YOUR SCORE//
+    //////////////
+    tft.drawCentreString("YOUR SCORE: " + (String)score, 160, 250, 1);
 
-  /////////
-  //START//
-  /////////
+  } else {
+    //////////////
+    //HIGH SCORE//
+    //////////////
+
+    // BG
+    tft.fillRect(71, 146, 175, 70, 0x4a49);
+    tft.drawRect(70, 145, 177, 72, TFT_BLUE);
+    tft.drawRect(69, 144, 179, 74, TFT_BLUE);
+    tft.drawRect(68, 143, 181, 76, TFT_WHITE);
+    tft.drawRect(67, 142, 183, 78, TFT_WHITE);
+
+    // Text
+    tft.setTextColor(TFT_WHITE);
+    tft.setTextSize(3);
+    tft.drawCentreString("HIGHSCORE", 160, 154, 1);
+    tft.setTextSize(2);
+    tft.drawCentreString((String)highscore, 160, 194, 1);
+
+    //////////////
+    //YOUR SCORE//
+    //////////////
+    tft.drawCentreString("YOUR SCORE: " + (String)score, 160, 250, 1);
+  }
+
+
+
+  //////////
+  //RETURN//
+  //////////
 
   tft.drawCentreString("PRESS CENTRE TO", 160, 300, 1);
   tft.drawCentreString("RETURN TO MENU", 160, 330, 1);
+  
+  
+  // reset game values
+  score = 0;
+  clearPlayArea();
 }
 
 bool blinkyLoss = true;
+bool blinkyHighscore = true;
 void updateLossMenu() {
   if (!loseMenu) { return; }  // just in case this runs while menu not active
   // Blink Start Text
@@ -193,9 +232,25 @@ void updateLossMenu() {
       tft.setTextColor(TFT_WHITE);
       blinkyLoss = true;
     }
+    tft.setTextSize(2);
     tft.drawCentreString("PRESS CENTRE TO", 160, 300, 1);
     tft.drawCentreString("RETURN TO MENU", 160, 330, 1);
+    if (newHighscore) {
+      if (blinkyHighscore) {
+        tft.setTextColor(0xffc0);
+        blinkyHighscore = false;
+      } else {
+        tft.setTextColor(0xf800);
+        blinkyHighscore = true;
+      }
+      tft.setTextSize(3);
+      tft.drawCentreString("NEW", 160, 154, 1);
+      tft.drawCentreString("HIGHSCORE", 160, 180, 1);
+    }
     oldTime = time;
+  }
+
+  if (newHighscore) {
   }
 
   // Centre Button

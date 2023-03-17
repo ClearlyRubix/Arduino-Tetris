@@ -1,9 +1,11 @@
 // TODO:
 // 7 segment display
+// highscore/score display
 // Music
 
 
 #include <TFT_eSPI.h>
+#include <EEPROM.h>
 
 TFT_eSPI tft = TFT_eSPI();
 
@@ -52,6 +54,7 @@ bool startMenuFirstLoop = true;
 bool loseMenu = false;
 bool loseMenuFirstLoop = true;
 
+uint32_t highscore = 0;
 
 void initGame() {
   tft.setRotation(4);
@@ -75,8 +78,11 @@ void setup() {
   pinMode(rotateButton, INPUT_PULLUP);
   pinMode(storeButton, INPUT_PULLUP);
   
+  // get highscore from eeprom
+  EEPROM.get(0, highscore);
+  
   // startup with startMenu
-  loseMenu = true;
+  startMenu = true;
   // setup randomness
   randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
   randomSeed(randSeed);
