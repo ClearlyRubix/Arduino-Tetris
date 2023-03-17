@@ -1,7 +1,6 @@
 // TODO:
-// Lose (Shape generation checking)
+// 7 segment display
 // Music
-// Start Menu
 
 
 #include <TFT_eSPI.h>
@@ -77,7 +76,7 @@ void setup() {
   pinMode(storeButton, INPUT_PULLUP);
   
   // startup with startMenu
-  startMenu = true;
+  loseMenu = true;
   // setup randomness
   randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
   randomSeed(randSeed);
@@ -124,6 +123,8 @@ void loop() {
     // running loss menu
     if (loseMenuFirstLoop) {
       loseMenuFirstLoop = false;
+      initLossMenu();
     }
+    updateLossMenu();
   }
 }
