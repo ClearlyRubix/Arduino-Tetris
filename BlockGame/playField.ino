@@ -12,13 +12,11 @@ void printPlayArea() {
 void clearPlayArea() {
   for (int y = AREAHEIGHT - 1; y >= 0; y--) {
     for (int x = 0; x < AREAWIDTH; x++) {
-      if (playArea[x][y] == 1) {
-        playArea[x][y] = 0;
-      }
+      playArea[x][y] = 0;
     }
   }
 }
-bool firstDrop = false;
+
 void lockShape(int oldX[3], int oldY[3], int oldCX, int oldCY) {
   for (int k = 0; k < 3; k++) {  // Lock Shape
     playArea[oldX[k]][oldY[k]] = 1;
@@ -32,8 +30,8 @@ void lockShape(int oldX[3], int oldY[3], int oldCX, int oldCY) {
 
   checkClears();
 
+  // create next block
   createBlock(getNextBlock(), startX, startY);
-  firstDrop = true;  // true whenever new block is generated
   genNextBlock();
 }
 
@@ -65,7 +63,7 @@ void dropShape() {
   for (int j = 0; j < 3; j++) {
     if (playArea[oldX[j]][oldY[j] - 1] == 1 || oldY[j] - 1 < 0) {
       lockShape(oldX, oldY, oldCX, oldCY);
-      if (firstDrop) { // if it fails on first check, you lose
+      if (oldY[j] == startY) {  // if it locks at spawning point, lose
         startMenu = false;
         startMenuFirstLoop = true;
         game = false;
@@ -80,18 +78,16 @@ void dropShape() {
   // Check next center position
   if (playArea[oldCX][oldCY - 1] == 1 || oldCY - 1 < 0) {
     lockShape(oldX, oldY, oldCX, oldCY);
-    if (firstDrop) { // if it fails on first check, you lose
-        startMenu = false;
-        startMenuFirstLoop = true;
-        game = false;
-        gameFirstLoop = true;
-        loseMenu = true;
-        loseMenuFirstLoop = true;
-      }
+    if (oldCY == startY) {  // if it locks at spawning point, lose
+      startMenu = false;
+      startMenuFirstLoop = true;
+      game = false;
+      gameFirstLoop = true;
+      loseMenu = true;
+      loseMenuFirstLoop = true;
+    }
     return;
   }
-
-  firstDrop = false;  // false after passing first drop check (and subsequent checks)
 
   // after checking, move down
   // clear non centers
