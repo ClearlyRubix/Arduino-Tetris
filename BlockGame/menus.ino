@@ -211,11 +211,6 @@ void initLossMenu() {
 
   tft.drawCentreString("PRESS CENTRE TO", 160, 300, 1);
   tft.drawCentreString("RETURN TO MENU", 160, 330, 1);
-  
-  
-  // reset game values
-  score = 0;
-  clearPlayArea();
 }
 
 bool blinkyLoss = true;
@@ -255,6 +250,8 @@ void updateLossMenu() {
 
   // Centre Button
   if (digitalRead(rotateButton) == LOW) {
+    score = 0;
+    clearPlayArea();
     startMenu = true;
     startMenuFirstLoop = true;
     game = false;
