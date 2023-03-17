@@ -4,7 +4,7 @@
 // Start Menu
 
 
-#include <TFT_eSPI.h> 
+#include <TFT_eSPI.h>
 
 TFT_eSPI tft = TFT_eSPI();
 
@@ -24,11 +24,11 @@ const int instaLockButton = 28;
 const int rotateButton = 26;
 const int storeButton = 30;
 
-const int startX = AREAWIDTH/2-1;
-const int startY = AREAHEIGHT-2;
+const int startX = AREAWIDTH / 2 - 1;
+const int startY = AREAHEIGHT - 2;
 
 // block statuses
-// block types Square, square = 0, I = 1, S = 2, Z = 3, L = 4, J = 5, T = 6 
+// block types Square, square = 0, I = 1, S = 2, Z = 3, L = 4, J = 5, T = 6
 int storedBlock = -1;
 int tempStore = -1;
 bool alreadyStoredThisTurn = false;
@@ -38,64 +38,92 @@ int currentBlock = -1;
 
 // game function variables
 int randSeed;
-int playArea[AREAWIDTH][AREAHEIGHT] = {0};
+int playArea[AREAWIDTH][AREAHEIGHT] = { 0 };
 
 unsigned long time = millis();
 unsigned long oldTime = 0;
 int score = 0;
 
+bool game = false;
+bool gameFirstLoop = true;
 
+bool startMenu = false;
+bool startMenuFirstLoop = true;
+
+bool loseMenu = false;
+bool loseMenuFirstLoop = true;
+
+
+void initGame() {
+  tft.setRotation(4);
+  tft.setOrigin(0, 0);
+  tft.fillScreen(TFT_BLACK);
+  tft.drawPixel(0, 480, TFT_GREEN);
+
+  // initialize game logic
+  genNextBlock();
+  createBlock(random(0, 7), startX, startY);
+  initDisplay();
+}
 
 void setup() {
   Serial.begin(250000);
   
+  // set pins
+  pinMode(leftButton, INPUT_PULLUP);
+  pinMode(rightButton, INPUT_PULLUP);
+  pinMode(instaLockButton, INPUT_PULLUP);
+  pinMode(rotateButton, INPUT_PULLUP);
+  pinMode(storeButton, INPUT_PULLUP);
+  
+  // startup with startMenu
+  startMenu = true;
   // setup randomness
   randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
   randomSeed(randSeed);
 
   // initialize tft Screen
   tft.init();
-  tft.setRotation(4);
-  tft.setOrigin(0,0);
-  tft.fillScreen(TFT_BLACK);
-  tft.drawPixel(0,480, TFT_GREEN);
-
-  // initialize buttons
-  pinMode(leftButton, INPUT_PULLUP);
-  pinMode(rightButton, INPUT_PULLUP);
-  pinMode(instaLockButton, INPUT_PULLUP);
-  pinMode(rotateButton, INPUT_PULLUP);
-  pinMode(storeButton, INPUT_PULLUP);
-
-  // initialize game logic
-  genNextBlock();
-  createBlock(random(0,7), startX, startY);
-  initDisplay();
-
 }
 
 
-
-
 void loop() {
-    time = millis(); // time for regular block dropping
+  if (startMenu) {
+    // running start menu
+    if (startMenuFirstLoop) {
+      startMenuFirstLoop = false;
+      initStartMenu();
+    }
+    updateStartMenu();
+
+  } else if (game) {
+    // running game
+    if (gameFirstLoop) {
+      gameFirstLoop = false;
+      initGame();
+    }
+    time = millis();  // time for regular block dropping
 
     // updatae random Seed
     randSeed = analogRead(A0) * analogRead(A1) * analogRead(A2);
-
-
+    
     // Check Buttons
     checkRotateButton();
     checkLeftButton();
     checkRightButton();
     checkInstaLockButton();
     checkStoreButton();
-    
+
     // every second
     if ((time - oldTime) >= 1000) {
-      printPlayArea();
-      oldTime=time;
+      //printPlayArea();
+      oldTime = time;
       dropShape();
     }
+  } else if (loseMenu) {
+    // running loss menu
+    if (loseMenuFirstLoop) {
+      loseMenuFirstLoop = false;
+    }
+  }
 }
-
