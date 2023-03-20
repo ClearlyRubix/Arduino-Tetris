@@ -1,6 +1,4 @@
 // TODO:
-// 7 segment display
-// highscore/score display
 // Music
 
 
@@ -24,6 +22,20 @@ const int rightButton = 24;
 const int instaLockButton = 28;
 const int rotateButton = 26;
 const int storeButton = 30;
+
+// 7 segment
+int pinA = 6;
+int pinB = 8;
+int pinC = 12;
+int pinD = 10;
+int pinE = 9;
+int pinF = 7;
+int pinG = 13;
+int pinDP = 11;
+int D1 = 2;
+int D2 = 3;
+int D3 = 4;
+int D4 = 5;
 
 const int startX = AREAWIDTH / 2 - 1;
 const int startY = AREAHEIGHT - 2;
@@ -77,6 +89,18 @@ void setup() {
   pinMode(instaLockButton, INPUT_PULLUP);
   pinMode(rotateButton, INPUT_PULLUP);
   pinMode(storeButton, INPUT_PULLUP);
+  pinMode(pinA, OUTPUT);
+  pinMode(pinB, OUTPUT);
+  pinMode(pinC, OUTPUT);
+  pinMode(pinD, OUTPUT);
+  pinMode(pinE, OUTPUT);
+  pinMode(pinF, OUTPUT);
+  pinMode(pinG, OUTPUT);
+  pinMode(pinDP, OUTPUT);
+  pinMode(D1, OUTPUT);
+  pinMode(D2, OUTPUT);
+  pinMode(D3, OUTPUT);
+  pinMode(D4, OUTPUT);
   
   // get highscore from eeprom
   EEPROM.get(0, highscore);
@@ -133,4 +157,5 @@ void loop() {
     }
     updateLossMenu();
   }
+  update7Segment();
 }

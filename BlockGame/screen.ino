@@ -95,6 +95,159 @@ void updateNextBlockArea() {
   generalDrawShape(oX, oY, nextBlock,TFT_YELLOW);
 }
 
-void update7Segment() {
+void writeChar(int i) {
+  switch (i) {
+    case 0:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, HIGH);
+      digitalWrite(pinF, HIGH);
+      digitalWrite(pinG, LOW);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 1:
+      digitalWrite(pinA, LOW);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, LOW);
+      digitalWrite(pinE, LOW);
+      digitalWrite(pinF, LOW);
+      digitalWrite(pinG, LOW);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 2:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, LOW);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, HIGH);
+      digitalWrite(pinF, LOW);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 3:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, LOW);
+      digitalWrite(pinF, LOW);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 4:
+      digitalWrite(pinA, LOW);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, LOW);
+      digitalWrite(pinE, LOW);
+      digitalWrite(pinF, HIGH);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 5:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, LOW);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, LOW);
+      digitalWrite(pinF, HIGH);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 6:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, LOW);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, HIGH);
+      digitalWrite(pinF, HIGH);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 7:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, LOW);
+      digitalWrite(pinE, LOW);
+      digitalWrite(pinF, LOW);
+      digitalWrite(pinG, LOW);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 8:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, HIGH);
+      digitalWrite(pinF, HIGH);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+    case 9:
+      digitalWrite(pinA, HIGH);
+      digitalWrite(pinB, HIGH);
+      digitalWrite(pinC, HIGH);
+      digitalWrite(pinD, HIGH);
+      digitalWrite(pinE, LOW);
+      digitalWrite(pinF, HIGH);
+      digitalWrite(pinG, HIGH);
+      digitalWrite(pinDP, LOW);
+      break;
+  }
+}
 
+int digitUpdateTime = 0;
+int digit = 1;
+int interval = 1000;
+void update7Segment() {
+  if (startMenu || loseMenu) {
+    interval = 100;
+  } else {
+    interval = 4;
+  }
+  if ((time - digitUpdateTime) > interval) {
+    switch (digit) {
+      case 1:
+        // First Digit
+        digitalWrite(D1, LOW);
+        digitalWrite(D2, HIGH);
+        digitalWrite(D3, HIGH);
+        digitalWrite(D4, HIGH);
+        writeChar((score / 1000U) % 10);  // gets fourth last digit
+        digit++;
+        break;
+      case 2:
+        // Second Digit
+        digitalWrite(D1, HIGH);
+        digitalWrite(D2, LOW);
+        digitalWrite(D3, HIGH);
+        digitalWrite(D4, HIGH);
+        writeChar((score / 100U) % 10);  // gets third last digit
+        digit++;
+        break;
+      case 3:
+        // Third Digit
+        digitalWrite(D1, HIGH);
+        digitalWrite(D2, HIGH);
+        digitalWrite(D3, LOW);
+        digitalWrite(D4, HIGH);
+        writeChar((score / 10U) % 10);  // gets second last digit
+        digit++;
+        break;
+      case 4:
+        // Fourth Digit
+        digitalWrite(D1, HIGH);
+        digitalWrite(D2, HIGH);
+        digitalWrite(D3, HIGH);
+        digitalWrite(D4, LOW);
+        writeChar((score / 1U) % 10);  // gets last digit
+        digit = 1;
+        break;
+    }
+    digitUpdateTime = time;
+  }
 }
