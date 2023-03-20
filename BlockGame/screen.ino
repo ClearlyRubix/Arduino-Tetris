@@ -60,7 +60,7 @@ void generalDrawShape(int oX, int oY, int shape, uint32_t color) {
       tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
       tft.fillRect(oX, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       tft.fillRect(oX - BLOCKWIDTH, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
-      tft.fillRect(oX + BLOCKWIDTH, oY  + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
+      tft.fillRect(oX + BLOCKWIDTH, oY + BLOCKHEIGHT, BLOCKWIDTH, BLOCKHEIGHT, color);
       break;
     case 4:  // L
       tft.fillRect(oX, oY, BLOCKWIDTH, BLOCKHEIGHT, color);
@@ -86,13 +86,13 @@ void generalDrawShape(int oX, int oY, int shape, uint32_t color) {
 void updateStoredBlockArea() {
   int oX = 40;
   int oY = 480 - 80;
-  generalDrawShape(oX, oY, storedBlock,TFT_YELLOW);
+  generalDrawShape(oX, oY, storedBlock, TFT_YELLOW);
 }
 
 void updateNextBlockArea() {
   int oX = 40;
   int oY = 480 - 80 - 120;
-  generalDrawShape(oX, oY, nextBlock,TFT_YELLOW);
+  generalDrawShape(oX, oY, nextBlock, TFT_YELLOW);
 }
 
 void writeChar(int i) {
@@ -200,16 +200,32 @@ void writeChar(int i) {
   }
 }
 
-int digitUpdateTime = 0;
+unsigned long digitUpdateTime = 0;
 int digit = 1;
-int interval = 1000;
+int interval;
 void update7Segment() {
+
   if (startMenu || loseMenu) {
-    interval = 100;
-  } else {
+    interval = 200;
+  } else if (game) {
     interval = 4;
   }
+  Serial.print("Start: ");
+  Serial.print(startMenu);
+  Serial.print(" Game: ");
+  Serial.print(game);
+  Serial.print(" Lose: ");
+  Serial.print(loseMenu);
+  Serial.print(" Interval: ");
+  Serial.print(interval);
+  Serial.print(" Time: ");
+  Serial.print(time);
+  Serial.print(" DigitTime: ");
+  Serial.println(digitUpdateTime);
+
+
   if ((time - digitUpdateTime) > interval) {
+    digitUpdateTime = time;
     switch (digit) {
       case 1:
         // First Digit
@@ -248,6 +264,5 @@ void update7Segment() {
         digit = 1;
         break;
     }
-    digitUpdateTime = time;
   }
 }

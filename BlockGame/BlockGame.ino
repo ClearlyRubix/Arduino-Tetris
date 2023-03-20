@@ -52,6 +52,7 @@ int currentBlock = -1;
 // game function variables
 int randSeed;
 int playArea[AREAWIDTH][AREAHEIGHT] = { 0 };
+int currentNote = 0; // for music first note
 
 unsigned long time = millis();
 unsigned long oldTime = 0;
@@ -101,7 +102,10 @@ void setup() {
   pinMode(D2, OUTPUT);
   pinMode(D3, OUTPUT);
   pinMode(D4, OUTPUT);
-  
+
+  // reset music
+  currentNote = 0;
+
   // get highscore from eeprom
   EEPROM.get(0, highscore);
   
@@ -142,6 +146,9 @@ void loop() {
     checkRightButton();
     checkInstaLockButton();
     checkStoreButton();
+
+    // continue music
+    updateSong();
 
     // every second
     if ((time - oldTime) >= 1000) {
