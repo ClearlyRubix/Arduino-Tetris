@@ -17,25 +17,25 @@ TFT_eSprite block = TFT_eSprite(&tft);
 #define BLOCKWIDTH 20
 #define BLOCKHEIGHT 20
 
-const int leftButton = 22;
-const int rightButton = 24;
-const int instaLockButton = 28;
-const int rotateButton = 26;
-const int storeButton = 30;
+const int leftButton = 41;
+const int rightButton = 39;
+const int instaLockButton = 47;
+const int rotateButton = 45;
+const int storeButton = 43;
 
 // 7 segment
-int pinA = 6;
-int pinB = 8;
-int pinC = 12;
-int pinD = 10;
-int pinE = 9;
-int pinF = 7;
+int pinA = 10;
+int pinB = 9;
+int pinC = 8;
+int pinD = 7;
+int pinE = 6;
+int pinF = 11;
 int pinG = 13;
-int pinDP = 11;
-int D1 = 2;
-int D2 = 3;
-int D3 = 4;
-int D4 = 5;
+int pinDP = 12;
+int D1 = 5;
+int D2 = 4;
+int D3 = 3;
+int D4 = 2;
 
 const int startX = AREAWIDTH / 2 - 1;
 const int startY = AREAHEIGHT - 2;
